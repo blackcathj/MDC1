@@ -125,6 +125,9 @@ int Fun4All_G4_TrkrPrePass(
   Enable::TRACKING_TRACK = true;
 //  Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
 
+  // a fast sim version of global vertex to be used in downstream reco.
+  Enable::GLOBAL_FASTSIM = true;
+
   //---------------
   // Magnet Settings
   //---------------
@@ -282,6 +285,15 @@ out->AddNode("SvtxSiliconTrackMap");
 out->AddNode("AssocInfoContainer");
     if (Enable::DSTOUT_COMPRESS) DstCompress(out);
     se->registerOutputManager(out);
+
+    // hack in an output stream. Need to update to fit in production
+    FullOutFile = DstOut::OutputDir + "/" + "DST_FAST_GLOBAL_VERTEX";
+    out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    out->AddNode("Sync");
+    out->AddNode("EventHeader");
+    out->AddNode("GlobalVertexMap");
+    se->registerOutputManager(out);
+
   }
   //-----------------
   // Event processing
